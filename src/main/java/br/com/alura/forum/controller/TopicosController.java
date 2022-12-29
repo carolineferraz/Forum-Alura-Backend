@@ -2,6 +2,7 @@ package br.com.alura.forum.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,9 +58,14 @@ public class TopicosController {
 	}
 	
 	@GetMapping("/{id}")
-	public TopicoDetalhesDto detalhar(@PathVariable Long id) {
-		Topico topico = topicoRepository.getReferenceById(id);
-		return new TopicoDetalhesDto(topico);
+	public ResponseEntity<TopicoDetalhesDto> detalhar(@PathVariable Long id) {
+		Optional<Topico> topico = topicoRepository.findById(id);
+		if(topico.isPresent()) {
+			return ResponseEntity.ok(new TopicoDetalhesDto(topico.get()));
+		}
+		
+		return ResponseEntity.notFound().build();
+		
 	}
 	
 	@PutMapping("/{id}")
