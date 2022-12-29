@@ -65,14 +65,18 @@ public class TopicosController {
 		}
 		
 		return ResponseEntity.notFound().build();
-		
 	}
 	
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
-		Topico topico = form.atualizar(id, topicoRepository);
-		return ResponseEntity.ok(new TopicoDto(topico));
+		Optional<Topico> topico = topicoRepository.findById(id);
+		if(topico.isPresent()) {
+			form.atualizar(id, topicoRepository);
+			return ResponseEntity.ok(new TopicoDto(topico.get()));
+		}
+		
+		return ResponseEntity.notFound().build();
 	}
 	
 	@DeleteMapping("/{id}")
